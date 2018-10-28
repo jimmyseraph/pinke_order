@@ -17,7 +17,7 @@ public class OrderAction {
     @Autowired
     private OrderService orderService;
 
-    @RequestMapping(value="add", method = RequestMethod.POST)
+    @RequestMapping(value="/add", method = RequestMethod.POST)
     @ResponseBody
     public OrderResponseEntity addOrder(
             @RequestHeader("Access-Token") String token,
