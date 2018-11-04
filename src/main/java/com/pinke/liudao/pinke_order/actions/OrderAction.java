@@ -2,6 +2,7 @@ package com.pinke.liudao.pinke_order.actions;
 
 import com.pinke.liudao.pinke_order.entities.OrderDTO;
 import com.pinke.liudao.pinke_order.entities.OrderEntity;
+import com.pinke.liudao.pinke_order.entities.OrderFilter;
 import com.pinke.liudao.pinke_order.entities.OrderResponseEntity;
 import com.pinke.liudao.pinke_order.services.AccessTokenService;
 import com.pinke.liudao.pinke_order.services.OrderService;
@@ -116,6 +117,91 @@ public class OrderAction {
             return orderResponseEntity;
         }
         orderService.doModifyOrder(orderId, orderEntity, orderResponseEntity);
+        return orderResponseEntity;
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public OrderResponseEntity searchOrder(
+            @RequestHeader("Access-Token") String token,
+            @RequestParam(value = "orderId", required = false) String orderId,
+            @RequestParam(value = "isPaid", required = false) String isPaid,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "amountLow", required = false) String amountLow,
+            @RequestParam(value = "amountHigh", required = false) String amountHigh,
+            @RequestParam(value = "receiver", required = false) String receiver,
+            @RequestParam(value = "status", required = false) String status
+    ){
+        OrderResponseEntity orderResponseEntity = new OrderResponseEntity();
+        // 1、检查access token
+        if(!accessTokenService.doCheckToken(token, orderResponseEntity)){
+            return orderResponseEntity;
+        }
+        OrderFilter orderFilter = new OrderFilter();
+        // 2、检查OrderId，如果orderId有值，则将其转换为数字型，并传递给orderFilter
+        if(orderId != null){
+            try {
+                orderFilter.setOrderId(Integer.parseInt(orderId));
+            }catch(Exception e){
+                e.printStackTrace();
+                orderResponseEntity.setRetCode(30005);
+                orderResponseEntity.setRetMsg("order id is NAN");
+                return orderResponseEntity;
+            }
+        }
+        // 3、检查isPaid，如果isPaid有值，则将其转为数字型，并传递给orderFilter
+        if(isPaid != null){
+            try {
+                orderFilter.setIsPaid(Integer.parseInt(isPaid));
+            }catch(Exception e){
+                e.printStackTrace();
+                orderResponseEntity.setRetCode(30006);
+                orderResponseEntity.setRetMsg("isPaid is NAN");
+                return orderResponseEntity;
+            }
+        }
+        // 4、检查address，如果address有值，则将其传递给orderFilter
+        if(address != null){
+            orderFilter.setAddress(address);
+        }
+        // 5、检查amountLow，如果amountLow有值，则将其转为double型，并传递给orderFilter
+        if(amountLow != null){
+            try {
+                orderFilter.setAmountLow(Double.parseDouble(amountLow));
+            }catch(Exception e){
+                e.printStackTrace();
+                orderResponseEntity.setRetCode(30007);
+                orderResponseEntity.setRetMsg("amountLow is NAN");
+                return orderResponseEntity;
+            }
+        }
+        // 6、检查amountHigh，如果amountHigh有值，则将其转为double型，并传递给orderFilter
+        if(amountHigh != null){
+            try {
+                orderFilter.setAmountHigh(Double.parseDouble(amountHigh));
+            }catch(Exception e){
+                e.printStackTrace();
+                orderResponseEntity.setRetCode(30008);
+                orderResponseEntity.setRetMsg("amountHigh is NAN");
+                return orderResponseEntity;
+            }
+        }
+        // 7、检查receiver，如果receiver有值，则将其传递给orderFilter
+        if(receiver != null){
+            orderFilter.setReceiver(receiver);
+        }
+        // 8、检查status，如果status有值，则将其转为int型，并传递给orderFilter
+        if(status != null){
+            try {
+                orderFilter.setStatus(Integer.parseInt(status));
+            }catch(Exception e){
+                e.printStackTrace();
+                orderResponseEntity.setRetCode(30009);
+                orderResponseEntity.setRetMsg("status is NAN");
+                return orderResponseEntity;
+            }
+        }
+        // 深入到sevice层，完成查询操作
+        orderService.doSearchOrder(orderFilter, orderResponseEntity);
         return orderResponseEntity;
     }
 }

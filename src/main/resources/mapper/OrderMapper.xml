@@ -34,7 +34,7 @@
         <if test="orderId != null and orderId != ''" >
             order_id = #{orderId} and
         </if>
-        <if test="isPaid != null and isPain != ''">
+        <if test="isPaid != null and isPaid != ''">
             is_paid = #{isPaid} and
         </if>
         <if test="address != null and address != ''">
