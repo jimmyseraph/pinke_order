@@ -12,6 +12,11 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+CREATE DATABASE pinke_api CHARACTER SET 'utf8mb4';
+CREATE USER 'liudao'@'%' identified by 'Aa-123456';
+grant all privileges on pinke_api.* to 'liudao'@'%';
+
+use pinke_api;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
